@@ -3,13 +3,20 @@
  * by pirple
  */
 
+// Dependencies
 const http = require("http");
 const https = require("https");
 const url = require("url");
 const fs = require("fs");
 const { StringDecoder } = require("string_decoder");
 
+// helpers
 const config = require("./config");
+const db = require("./lib/db");
+
+db.delete("test", "abhi", function (err) {
+  console.log("Error is ", err);
+});
 
 const httpServer = http.createServer(function (req, res) {
   unifiedServer(req, res);
