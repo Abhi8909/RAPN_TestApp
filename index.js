@@ -4,12 +4,35 @@
  */
 
 const http = require("http");
+const https = require("https");
 const url = require("url");
+const fs = require("fs");
 const { StringDecoder } = require("string_decoder");
 
 const config = require("./config");
 
-const server = http.createServer(function (req, res) {
+const httpServer = http.createServer(function (req, res) {
+  unifiedServer(req, res);
+});
+
+httpServer.listen(config.http_PORT, function () {
+  console.log("Server is listening on port " + config.http_PORT);
+});
+
+const httpsServerOptions = {
+  key: fs.readFileSync("./https/key.pem"),
+  cert: fs.readFileSync("./https/cert.pem"),
+};
+
+const httpsServer = https.createServer(httpsServerOptions, function (req, res) {
+  unifiedServer(req, res);
+});
+
+httpsServer.listen(config.https_PORT, function () {
+  console.log("Server is listening on port " + config.https_PORT);
+});
+
+let unifiedServer = function (req, res) {
   // parsed the url
   let parsedUrl = url.parse(req.url, true);
 
@@ -62,16 +85,12 @@ const server = http.createServer(function (req, res) {
       console.log(JSON.stringify(_payload));
     });
   });
-});
-
-server.listen(config.PORT, function () {
-  console.log("Server is listening on port " + config.PORT);
-});
+};
 
 let handlers = {};
 
-handlers.sample = function (data, callback) {
-  callback(402, { name: "Sample Handler" });
+handlers.ping = function (data, callback) {
+  callback(200);
 };
 
 handlers.notFound = function (data, callback) {
@@ -79,5 +98,5 @@ handlers.notFound = function (data, callback) {
 };
 
 let router = {
-  sample: handlers.sample,
+  ping: handlers.ping,
 };

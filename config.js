@@ -8,13 +8,15 @@ let config = {};
 
 // configuration for staging mode
 config.staging = {
-  PORT: 3000,
+  http_PORT: 3000,
+  https_PORT: 3001,
   envName: "Staging",
 };
 
 // configuration for production mode
 config.production = {
-  PORT: 4000,
+  http_PORT: 80,
+  https_PORT: 443,
   envName: "Production",
 };
 
