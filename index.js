@@ -5,6 +5,7 @@
 
 const http = require("http");
 const url = require("url");
+const { StringDecoder } = require("string_decoder");
 
 const server = http.createServer(function (req, res) {
   // parsed the url
@@ -20,9 +21,61 @@ const server = http.createServer(function (req, res) {
   // Get the headers
   let headers = req.headers;
 
-  res.end("Hello World\n");
+  // Get the query
+  let queryObject = parsedUrl.query;
+
+  // Get the payload
+  let decoder = new StringDecoder("utf8");
+
+  let payload = "";
+
+  req.on("data", function (data) {
+    payload += decoder.write(data);
+  });
+
+  req.on("end", function () {
+    payload += decoder.end();
+
+    let data = {
+      trimmedPath: trimmedPath,
+      queryObject: queryObject,
+      headers: headers,
+      payload: payload,
+      method: method,
+    };
+
+    let handlerToCall = router[trimmedPath]
+      ? router[trimmedPath]
+      : handlers.notFound;
+
+    handlerToCall(data, function (statusCode, _payload) {
+      statusCode = typeof statusCode === "number" ? statusCode : 200;
+      _payload = typeof _payload === "object" ? _payload : {};
+
+      // send the response
+      res.setHeader("Content-Type", "application/json");
+      res.writeHead(statusCode);
+      res.end(JSON.stringify(_payload));
+
+      console.log(JSON.stringify(_payload));
+    });
+  });
 });
 
 server.listen(3000, function () {
   console.log("Server is listening on port 3000");
 });
+
+let handlers = {};
+
+handlers.sample = function (data, callback) {
+  callback(402, { name: "Sample Handler" });
+};
+
+handlers.notFound = function (data, callback) {
+  callback(404);
+};
+
+let router = {
+  sample: handlers.sample,
+};
