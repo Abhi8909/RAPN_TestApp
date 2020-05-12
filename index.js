@@ -13,10 +13,7 @@ const { StringDecoder } = require("string_decoder");
 // helpers
 const config = require("./config");
 const db = require("./lib/db");
-
-db.delete("test", "abhi", function (err) {
-  console.log("Error is ", err);
-});
+const handlers = require("./lib/handlers");
 
 const httpServer = http.createServer(function (req, res) {
   unifiedServer(req, res);
@@ -94,16 +91,8 @@ let unifiedServer = function (req, res) {
   });
 };
 
-let handlers = {};
-
-handlers.ping = function (data, callback) {
-  callback(200);
-};
-
-handlers.notFound = function (data, callback) {
-  callback(404);
-};
-
 let router = {
   ping: handlers.ping,
+  users: handlers.users,
+  tokens: handlers.tokens,
 };
