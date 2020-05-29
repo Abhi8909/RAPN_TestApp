@@ -12,8 +12,9 @@ const { StringDecoder } = require("string_decoder");
 
 // helpers
 const config = require("./config");
-const db = require("./lib/db");
 const handlers = require("./lib/handlers");
+const payment = require("./lib/stripe");
+
 
 const httpServer = http.createServer(function (req, res) {
   unifiedServer(req, res);
@@ -85,8 +86,6 @@ let unifiedServer = function (req, res) {
       res.setHeader("Content-Type", "application/json");
       res.writeHead(statusCode);
       res.end(JSON.stringify(_payload));
-
-      console.log(JSON.stringify(_payload));
     });
   });
 };
@@ -95,4 +94,6 @@ let router = {
   ping: handlers.ping,
   users: handlers.users,
   tokens: handlers.tokens,
+  getMenu: handlers.getMenu,
+  cart: handlers.cart,
 };
