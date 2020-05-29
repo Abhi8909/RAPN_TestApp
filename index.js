@@ -96,4 +96,5 @@ let router = {
   tokens: handlers.tokens,
   getMenu: handlers.getMenu,
   cart: handlers.cart,
+  order:handlers.order
 };

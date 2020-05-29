@@ -22,22 +22,7 @@ config.staging = {
   hashingSecret: "iAmCreatingAHasingSecret",
   acceptedHttpMethods: ["get", "post", "put", "delete"],
   collections: collections,
-  currency:'inr',
-  stripe: {
-    secretKey: "sk_test_ZWYyjD8XfOq0uW4tjwa53lMw00FbsSxQbI",
-    hostname: "api.stripe.com",
-    paths: {
-      createPaymentIntent: "/v1/payment_intents/",
-      createCharge: "/v1/charges",
-    },
-  },
-  mailgun:{
-    secretKey:"df32af74be4aad600b334ad05a5ec6d4-7fba8a4e-edc64d7e",
-    hostname:"api.mailgun.net",
-    path:"/v3/sandbox83d7bbd6b3e74dbdb85196968b5e07eb.mailgun.org/messages",
-    from:"Pizza Services <mailgun@sandbox83d7bbd6b3e74dbdb85196968b5e07eb.mailgun.org>",
-    subject:"Order Receipt"
-  }
+  currency: "inr",
 };
 
 // configuration for production mode
@@ -48,26 +33,14 @@ config.production = {
   hashingSecret: "iAmCreatingAHasingSecretForProd",
   acceptedHttpMethods: ["get", "post", "put", "delete"],
   collections: collections,
-  currency:'inr',
-  stripe: {
-    secretKey: "sk_test_ZWYyjD8XfOq0uW4tjwa53lMw00FbsSxQbI:",
-    baseUrl: "api.stripe.com/v1/",
-    paths: {
-      createPaymentIntent: "payment_intents",
-      createCharge: "charges",
-    },
-  },
-  mailgun:{
-    secretKey:"df32af74be4aad600b334ad05a5ec6d4-7fba8a4e-edc64d7e",
-    hostname:"api.mailgun.net",
-    path:"/v3/sandbox83d7bbd6b3e74dbdb85196968b5e07eb.mailgun.org/messages",
-    from:"Pizza Services <mailgun@sandbox83d7bbd6b3e74dbdb85196968b5e07eb.mailgun.org>",
-    subject:"Order Receipt"
-  }
+  currency: "inr",
 };
 
 // get the enviroment
 let env = process.env.NODE_ENV ? process.env.NODE_ENV : "staging";
 
+let configToExport = config[env];
+let secretKeys =
+  env === "staging" ? require("./keys") : require("./sample_keys");
 // export the module
-module.exports = config[env];
+module.exports = { ...configToExport, ...secretKeys };
